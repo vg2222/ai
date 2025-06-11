@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>VoiceBox Chat</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    #history { list-style: none; padding: 0; }
+    #history li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    #history b { display: inline-block; width: 40px; }
+    #form { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>История вопросов и ответов</h1>
+  <ul id="history"></ul>
+
+  <div id="form">
+    <h2>Задать свой текстовый вопрос</h2>
+    <input id="textInput" placeholder="Напишите вопрос..." style="width: 300px;" />
+    <button onclick="sendText()">Отправить</button>
+  </div>
+
+  <script>
+    async function loadHistory() {
+      try {
+        const res = await fetch("/history");
+        const data = await res.json();
+        const list = document.getElementById("history");
+        list.innerHTML = "";
+        data.forEach(item => {
+          const li = document.createElement("li");
+          li.innerHTML = `<b>Q:</b> ${item.question}<br/><b>A:</b> ${item.answer}`;
+          list.appendChild(li);
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function sendText() {
+      const text = document.getElementById("textInput").value.trim();
+      if (!text) {
+        alert("Введите текст!");
+        return;
+      }
+      try {
+        const res = await fetch("/message", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+        const data = await res.json();
+        alert("Ответ: " + data.answer);
+        document.getElementById("textInput").value = "";
+        await loadHistory();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // При загрузке страницы сразу подгружаем историю
+    window.onload = loadHistory;
+  </script>
+</body>
+</html>
