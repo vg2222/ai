@@ -11,7 +11,7 @@ UPLOAD_FOLDER   = "uploads"
 # ВАЖНО: Замените этот ключ на ваш настоящий ключ Gemini API!
 GEMINI_API_KEY  = os.getenv("TOKEN")
 HOST            = "0.0.0.0"
-PORT            = 5000
+PORT            = 5050
 
 # ========== ИНИЦИАЛИЗАЦИЯ ==========
 app = Flask(__name__)
